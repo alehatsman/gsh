@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -137,11 +138,27 @@ func parseTrendingPage(doc *goquery.Document) (*SearchResult, error) {
 
 	sr := &SearchResult{
 		TotalCount: total,
-		Items:      repos,
+		Items:      sortAndLimirSR(repos, 15),
 	}
 
 	return sr, nil
 }
+
+func sortAndLimirSR(repos []Repo, limit int) []Repo {
+	sort.Sort(ByStars(repos))
+
+	if len(repos) > limit {
+		repos = repos[:limit]
+	}
+
+	return repos
+}
+
+type ByStars []Repo
+
+func (bs ByStars) Len() int           { return len(bs) }
+func (bs ByStars) Swap(i, j int)      { bs[i], bs[j] = bs[j], bs[i] }
+func (bs ByStars) Less(i, j int) bool { return bs[i].Stars > bs[j].Stars }
 
 func parseDescription(desc string) string {
 	reg, err := regexp.Compile("[^a-zA-Z0-9 ]+")
