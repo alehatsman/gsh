@@ -2,4 +2,4 @@ install:
 	go install
 
 build:
-	go build -o ./out/gsh ./pkg
+	go build -o ./out/gsh ./
