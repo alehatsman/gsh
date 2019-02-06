@@ -1,3 +1,9 @@
+default:
+	make gotest
+
+gotest:
+	go test ./...
+
 install:
 	go install
 
